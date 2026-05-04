@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import './Dashboard.css';
 import { LogoWithoutSubtitle as Logo } from '../../components/logo/Logo';
 import DashboardTopbar from '../../components/DashboardTopbar';
@@ -9,6 +9,15 @@ import { profileService } from '../../services/profileService';
 const ManufacturerDashboardLayout = () => {
   const [userName, setUserName] = useState("Loading...");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const isActive = (path) => {
+    if (path === '/manufacturer') {
+      return currentPath === '/manufacturer' || currentPath === '/manufacturer/';
+    }
+    return currentPath.startsWith(path);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -38,15 +47,15 @@ const ManufacturerDashboardLayout = () => {
           <Logo />
         </div>
         <nav className="sidebar-nav">
-          <Link className="nav-item nav-item-active" to="/manufacturer" onClick={() => setIsSidebarOpen(false)}>
+          <Link className={`nav-item ${isActive('/manufacturer') ? 'nav-item-active' : ''}`} to="/manufacturer" onClick={() => setIsSidebarOpen(false)}>
             <span className="material-symbols-outlined nav-icon" data-icon="dashboard">dashboard</span>
             <span className="nav-text">Dashboard</span>
           </Link>
-          <Link className="nav-item" to="/manufacturer/staffs" onClick={() => setIsSidebarOpen(false)}>
+          <Link className={`nav-item ${isActive('/manufacturer/staffs') ? 'nav-item-active' : ''}`} to="/manufacturer/staffs" onClick={() => setIsSidebarOpen(false)}>
             <span className="material-symbols-outlined nav-icon" data-icon="badge">badge</span>
             <span className="nav-text">Staffs</span>
           </Link>
-          <Link className="nav-item" to="/manufacturer/product-catalog" onClick={() => setIsSidebarOpen(false)}>
+          <Link className={`nav-item ${isActive('/manufacturer/product-catalog') ? 'nav-item-active' : ''}`} to="/manufacturer/product-catalog" onClick={() => setIsSidebarOpen(false)}>
             <span className="material-symbols-outlined nav-icon" data-icon="inventory_2">inventory_2</span>
             <span className="nav-text">Product Catalog</span>
           </Link>

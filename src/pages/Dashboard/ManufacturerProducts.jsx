@@ -1,9 +1,9 @@
 import React, {  useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {  z } from "zod";
 import { productService } from '../../services/productService';
 // import './ManufacturerProducts.css';
 import { toast } from 'sonner';
+import ProductDetailsModal from './ProductDetails';
 
 const productSchema = z.object({
   name: z.string()
@@ -20,6 +20,13 @@ const productSchema = z.object({
       const num = parseFloat(val.replace(/[^0-9.]/g, ""));
       return !isNaN(num) && num > 0;
     }, "Invalid price"),
+
+  quantity: z.string()
+    .min(1, "Quantity is required")
+    .refine((val) => {
+      const num = parseInt(val, 10);
+      return !isNaN(num) && num >= 0;
+    }, "Invalid quantity"),
 
   warranty: z.string().min(1, "Warranty is required"),
 
@@ -38,13 +45,15 @@ const ManufacturerProducts = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingUpdate, setPendingUpdate] = useState(null);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
 
   const [newProduct, setNewProduct] = useState({
     id: "" , 
     name: '',
     category: '',
     price: '',
+    quantity: '',
     warranty: '',
     description: '',
   });
@@ -58,6 +67,7 @@ const ManufacturerProducts = () => {
           name: p.productName,
           category : p.category, 
           price : String(p.price), 
+          quantity : String(p.quantity ?? '0'),
           warranty : p.warrantyType,
           description : p.description,
           id: p.productId 
@@ -131,7 +141,7 @@ const ManufacturerProducts = () => {
 
   const closeAddModal = () => {
     setAddModalOpen(false);
-    setNewProduct({ name: '', category: '', price: '', warranty: '', description: '' });
+    setNewProduct({ name: '', category: '', price: '', quantity: '', warranty: '', description: '' });
     setErrors({});
   };
 
@@ -166,7 +176,7 @@ const ManufacturerProducts = () => {
       <div className="product-page-header">
         <div>
           <h2>Product Catalog</h2>
-          <p>Products added by this manufacturer.</p>
+          {/* <p>Products added by this manufacturer.</p> */}
         </div>
         <button className="btn-add-product" onClick={openAddModal}>
           <span className="material-symbols-outlined">add</span>
@@ -182,6 +192,7 @@ const ManufacturerProducts = () => {
               <th>Product Name</th>
               <th>Category</th>
               <th>Price</th>
+              <th>Quantity</th>
               <th>Warranty Type</th>
               <th>Description</th>
               <th>Actions</th>
@@ -190,7 +201,7 @@ const ManufacturerProducts = () => {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan="7" className="empty-row">
+                <td colSpan="8" className="empty-row">
                   Loading products...
                 </td>
               </tr>
@@ -198,7 +209,7 @@ const ManufacturerProducts = () => {
               products.map((product) => (
                 <tr 
                   key={product.id}
-                  onClick={() => navigate(`/manufacturer/product-catalog/${product.id}`)}
+                  onClick={() => { setSelectedProduct(product); setDetailsModalOpen(true); }}
                   style={{ cursor: 'pointer' }}
                   className="clickable-row"
                 >
@@ -206,6 +217,7 @@ const ManufacturerProducts = () => {
                   <td>{product.name}</td>
                   <td>{product.category}</td>
                   <td>{product.price}</td>
+                  <td>{product.quantity}</td>
                   <td>{product.warranty}</td>
                   <td className="description-cell">{product.description}</td>
                   <td className="actions-cell">
@@ -228,7 +240,7 @@ const ManufacturerProducts = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="empty-row">
+                <td colSpan="8" className="empty-row">
                   No products have been added yet.
                 </td>
               </tr>
@@ -261,10 +273,17 @@ const ManufacturerProducts = () => {
                  <input type="text" name="category" value={editProduct.category} onChange={handleEditChange} />
                   {errors.category && <span className="field-error">{errors.category[0]}</span>}
                 </label>
+              </div>
+              <div className="product-grid-three">
                 <label className="product-field">
                   <span>Price</span>
                 <input type="text" name="price" value={editProduct.price} onChange={handleEditChange} />
                   {errors.price && <span className="field-error">{errors.price[0]}</span>}
+                </label>
+                <label className="product-field">
+                  <span>Quantity</span>
+                <input type="number" name="quantity" value={editProduct.quantity} onChange={handleEditChange} min="0" />
+                  {errors.quantity && <span className="field-error">{errors.quantity[0]}</span>}
                 </label>
                 <label className="product-field">
                   <span>Warranty Type</span>
@@ -323,10 +342,17 @@ const ManufacturerProducts = () => {
                   <input type="text" name="category" value={newProduct.category} onChange={handleAddChange}  />
                   {errors.category && <span className="field-error">{errors.category[0]}</span>}
                 </label>
+              </div>
+              <div className="product-grid-three">
                 <label className="product-field">
                   <span>Price</span>
                   <input type="text" name="price" value={newProduct.price} onChange={handleAddChange}  />
                   {errors.price && <span className="field-error">{errors.price[0]}</span>}
+                </label>
+                <label className="product-field">
+                  <span>Quantity</span>
+                  <input type="number" name="quantity" value={newProduct.quantity} onChange={handleAddChange} min="0" />
+                  {errors.quantity && <span className="field-error">{errors.quantity[0]}</span>}
                 </label>
                 <label className="product-field">
                   <span>Warranty Type</span>
@@ -346,6 +372,14 @@ const ManufacturerProducts = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {isDetailsModalOpen && selectedProduct && (
+        <ProductDetailsModal
+          product={selectedProduct}
+          onClose={() => { setDetailsModalOpen(false); setSelectedProduct(null); }}
+          onEdit={(product) => { openEditModal(product); }}
+        />
       )}
 
     </div>

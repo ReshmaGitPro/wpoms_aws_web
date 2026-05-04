@@ -16,7 +16,7 @@ import CustomerOverview from "../pages/Overview/CustomerOverview";
 import Staffs from "../pages/Staffs/Staffs";
 import ManufacturerProducts from "../pages/Dashboard/ManufacturerProducts";
 import VendorProducts from "../pages/Dashboard/VendorProducts";
-import ProductDetails from "../pages/Dashboard/ProductDetails";
+import ProductDetailsPage from "../pages/Dashboard/ProductDetailsPage";
 
 const AppRoutes = () => {
   return (
@@ -25,13 +25,14 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
 
+      {/* Protected Routes Wrapper */}
       <Route element={<ProtectedRoute />}>
         {/* Manufacturer Routes */}
         <Route element={<ProtectedRoute allowedRoles={['manufacturer']} />}>
           <Route path="/manufacturer" element={<ManufacturerDashboardLayout />}>
             <Route index element={<ManufacturerOverview />} />
             <Route path="product-catalog" element={<ManufacturerProducts />} />
-            <Route path="product-catalog/:id" element={<ProductDetails />} />
+            <Route path="product-catalog/:id" element={<ProductDetailsPage />} />
             <Route path="staffs" element={<Staffs type="manufacturer" />} />
             <Route path="profile" element={<ManufacturerProfile />} />
           </Route>
@@ -42,7 +43,7 @@ const AppRoutes = () => {
           <Route path="/vendor" element={<VendorDashboardLayout />}>
             <Route index element={<VendorOverview />} />
             <Route path="product-catalog" element={<VendorProducts />} />
-            <Route path="product-catalog/:id" element={<ProductDetails />} />
+            <Route path="product-catalog/:id" element={<ProductDetailsPage />} />
             <Route path="profile" element={<VendorProfile />} />
             <Route path="staffs" element={<Staffs type="vendor" />} />
           </Route>

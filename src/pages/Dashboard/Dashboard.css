@@ -68,8 +68,7 @@
 }
 
 .nav-item:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
+  color: #e5c363;
 }
 
 .nav-item-active {
@@ -468,7 +467,7 @@
 .product-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .product-grid {
@@ -480,6 +479,18 @@
 @media (min-width: 720px) {
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.product-grid-three {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 720px) {
+  .product-grid-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1276,3 +1287,35 @@
   opacity: 1;
   pointer-events: auto;
 }
+
+/* ── Product Details Modal (pop-in) ── */
+.product-details-modal-overlay {
+  animation: detailsOverlayFadeIn 0.25s ease-out;
+}
+
+.product-details-modal {
+  width: min(520px, 100%) !important;
+  animation: detailsModalPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center center;
+}
+
+@keyframes detailsOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes detailsModalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
