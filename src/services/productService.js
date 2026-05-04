@@ -1,7 +1,30 @@
 import apiClient from '../apiClient';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const api = axios.create({ baseURL: API_URL });
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("jwtToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn("401 Unauthorized received in productService, but preventing automatic logout.");
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const productService = {
   getAllProducts: async () => {
-    const response = await apiClient.get(
+    const response = await api.get(
       `/api/manufacturer/products?manufacturerId=${localStorage.getItem("roleId")}`
     );
     return response.data;
@@ -11,7 +34,7 @@ export const productService = {
     const manufacturerId = localStorage.getItem("roleId");
     const response = await apiClient.get(`/api/manufacturer/product?manufacturerId=${manufacturerId}&productId=${productId}`);
     const p = response.data;
-    
+
     // Normalize data if it comes in backend format
     if (p && p.productName) {
       return {
