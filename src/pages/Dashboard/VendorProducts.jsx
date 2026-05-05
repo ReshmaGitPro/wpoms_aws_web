@@ -102,9 +102,14 @@ const VendorProducts = () => {
     setCurrentPage(1);
   };
 
-  // Fixed categories and warranties for dropdowns as requested
-  const categories = ['All Categories', 'Electronics', 'Smart phones', 'Accessories', 'Toys', 'Industrial Equipments'];
-  const warranties = ['All Types', '1 year', '2 year', '3 year', '4 year', '5 year'];
+  // Dynamically generate categories and warranties from the products list
+  const categories = useMemo(() => {
+    return ['All Categories', ...new Set(products.map(p => p.category).filter(Boolean))];
+  }, [products]);
+
+  const warranties = useMemo(() => {
+    return ['All Types', ...new Set(products.map(p => p.warranty).filter(Boolean))];
+  }, [products]);
 
   return (
     <div className="catalog-page">
