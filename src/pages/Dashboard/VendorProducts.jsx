@@ -102,7 +102,7 @@ const VendorProducts = () => {
     setCurrentPage(1);
   };
 
-  // Dynamically generate categories and warranties from the products list
+  
   const categories = useMemo(() => {
     return ['All Categories', ...new Set(products.map(p => p.category).filter(Boolean))];
   }, [products]);
