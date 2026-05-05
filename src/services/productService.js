@@ -43,7 +43,7 @@ export const productService = {
         price: p.price,
         warranty: p.warrantyType || p.warranty,
         description: p.description,
-        quantity: p.quantity ?? '',
+        quantity: p.quantity !== undefined ? Number(p.quantity) : 0,
         id: p.productId || p.id
       };
     }
@@ -57,7 +57,7 @@ export const productService = {
       price: data.price,
       warrantyType: data.warranty,
       description: data.description,
-      quantity: data.quantity ? Number(data.quantity) : 0,
+      quantity: data.quantity !== undefined ? Number(data.quantity) : 0,
       manufacturerId: localStorage.getItem("roleId")
     };
 
@@ -83,7 +83,7 @@ export const productService = {
         price: data.price,
         warrantyType: data.warranty,
         description: data.description,
-        quantity: data.quantity ? Number(data.quantity) : 0,
+        quantity: data.quantity !== undefined ? Number(data.quantity) : 0,
         manufacturerId: localStorage.getItem("roleId")
       };
       const response = await apiClient.put(`/api/manufacturer/update-product?manufacturerId=${localStorage.getItem("roleId")}&productId=${id}`, payload);

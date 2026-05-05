@@ -151,7 +151,7 @@ const VendorProducts = () => {
             <div className="price-range">
               <input 
                 type="number" 
-                placeholder="Min" 
+                placeholder="₹ Min" 
                 value={minPrice} 
                 onChange={(e) => {
                   setMinPrice(e.target.value);
@@ -161,7 +161,7 @@ const VendorProducts = () => {
               <span>–</span>
               <input 
                 type="number" 
-                placeholder="Max" 
+                placeholder="₹ Max" 
                 value={maxPrice} 
                 onChange={(e) => {
                   setMaxPrice(e.target.value);
