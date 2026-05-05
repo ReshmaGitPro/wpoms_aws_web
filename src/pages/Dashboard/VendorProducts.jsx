@@ -66,7 +66,7 @@ const VendorProducts = () => {
       result = result.filter(p => p.warranty === warrantyFilter);
     }
 
-    // Price
+   
     if (minPrice) {
       result = result.filter(p => p.price >= parseFloat(minPrice));
     }
