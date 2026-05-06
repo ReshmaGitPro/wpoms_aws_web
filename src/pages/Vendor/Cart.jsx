@@ -5,16 +5,15 @@ import CartSummary from './components/CartSummary';
 import './Cart.css';
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Load cart from localStorage
-    const savedCart = JSON.parse(localStorage.getItem('vendorCart') || '[]');
-    setCartItems(savedCart);
-  }, []);
+  //Initialize from localStorage
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem('vendorCart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
-  // Update localStorage whenever cartItems change
+  //Sync with localStorage
   useEffect(() => {
     localStorage.setItem('vendorCart', JSON.stringify(cartItems));
   }, [cartItems]);
