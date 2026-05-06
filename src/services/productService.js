@@ -1,4 +1,5 @@
 import apiClient from '../apiClient';
+
 export const productService = {
   getAllProducts: async () => {
     const response = await apiClient.get(
@@ -7,12 +8,17 @@ export const productService = {
     return response.data;
   },
 
+  getAllVendorProducts: async () => {
+    const response = await apiClient.get('/api/vendor/products');
+    return response.data;
+  },
+
   getProductById: async (productId) => {
     const manufacturerId = localStorage.getItem("roleId");
     const response = await apiClient.get(`/api/manufacturer/product?manufacturerId=${manufacturerId}&productId=${productId}`);
     const p = response.data;
+
     
-    // Normalize data if it comes in backend format
     if (p && p.productName) {
       return {
         name: p.productName,
@@ -20,7 +26,7 @@ export const productService = {
         price: p.price,
         warranty: p.warrantyType || p.warranty,
         description: p.description,
-        quantity: p.quantity ?? '',
+        quantity: p.quantity !== undefined ? Number(p.quantity) : 0,
         id: p.productId || p.id
       };
     }
@@ -34,7 +40,7 @@ export const productService = {
       price: data.price,
       warrantyType: data.warranty,
       description: data.description,
-      quantity: data.quantity ? Number(data.quantity) : 0,
+      quantity: data.quantity !== undefined ? Number(data.quantity) : 0,
       manufacturerId: localStorage.getItem("roleId")
     };
 
@@ -60,7 +66,7 @@ export const productService = {
         price: data.price,
         warrantyType: data.warranty,
         description: data.description,
-        quantity: data.quantity ? Number(data.quantity) : 0,
+        quantity: data.quantity !== undefined ? Number(data.quantity) : 0,
         manufacturerId: localStorage.getItem("roleId")
       };
       const response = await apiClient.put(`/api/manufacturer/update-product?manufacturerId=${localStorage.getItem("roleId")}&productId=${id}`, payload);
@@ -70,4 +76,3 @@ export const productService = {
     }
   }
 };
-

@@ -25,26 +25,36 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
 
+      {/* Protected Routes Wrapper */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/manufacturer" element={<ManufacturerDashboardLayout />}>
-          <Route index element={<ManufacturerOverview />} />
-        <Route path="product-catalog" element={<ManufacturerProducts />} />
-           <Route path="staffs" element={<Staffs type="manufacturer" />} />
-          <Route path="profile" element={<ManufacturerProfile />} />
-           
+        {/* Manufacturer Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['manufacturer']} />}>
+          <Route path="/manufacturer" element={<ManufacturerDashboardLayout />}>
+            <Route index element={<ManufacturerOverview />} />
+            <Route path="product-catalog" element={<ManufacturerProducts />} />
+            <Route path="product-catalog/:id" element={<ProductDetailsPage />} />
+            <Route path="staffs" element={<Staffs type="manufacturer" />} />
+            <Route path="profile" element={<ManufacturerProfile />} />
+          </Route>
         </Route>
 
-        <Route path="/vendor" element={<VendorDashboardLayout />}>
-          <Route index element={<VendorOverview />} />
-        <Route path="product-catalog" element={<VendorProducts />} />
-        <Route path="product-catalog/:id" element={<ProductDetailsPage />} />
-          <Route path="profile" element={<VendorProfile />} />
-          <Route path="staffs" element={<Staffs type="vendor" />} />
+        {/* Vendor Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['vendor']} />}>
+          <Route path="/vendor" element={<VendorDashboardLayout />}>
+            <Route index element={<VendorOverview />} />
+            <Route path="product-catalog" element={<VendorProducts />} />
+            <Route path="product-catalog/:id" element={<ProductDetailsPage />} />
+            <Route path="profile" element={<VendorProfile />} />
+            <Route path="staffs" element={<Staffs type="vendor" />} />
+          </Route>
         </Route>
 
-        <Route path="/customer" element={<CustomerDashboardLayout />}>
-          <Route index element={<CustomerOverview />} />
-          <Route path="profile" element={<CustomerProfile />} />
+        {/* Customer Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
+          <Route path="/customer" element={<CustomerDashboardLayout />}>
+            <Route index element={<CustomerOverview />} />
+            <Route path="profile" element={<CustomerProfile />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

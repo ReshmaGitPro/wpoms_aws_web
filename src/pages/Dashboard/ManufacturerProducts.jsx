@@ -21,12 +21,9 @@ const productSchema = z.object({
       return !isNaN(num) && num > 0;
     }, "Invalid price"),
 
-  quantity: z.string()
-    .min(1, "Quantity is required")
-    .refine((val) => {
-      const num = parseInt(val, 10);
-      return !isNaN(num) && num >= 0;
-    }, "Invalid quantity"),
+  quantity: z.coerce.number()
+    .int("Quantity must be an integer")
+    .min(0, "Invalid quantity"),
 
   warranty: z.string().min(1, "Warranty is required"),
 
@@ -53,7 +50,7 @@ const ManufacturerProducts = () => {
     name: '',
     category: '',
     price: '',
-    quantity: '',
+    quantity: 0,
     warranty: '',
     description: '',
   });
@@ -67,7 +64,7 @@ const ManufacturerProducts = () => {
           name: p.productName,
           category : p.category, 
           price : String(p.price), 
-          quantity : String(p.quantity ?? '0'),
+          quantity : Number(p.quantity ?? 0),
           warranty : p.warrantyType,
           description : p.description,
           id: p.productId 
@@ -141,7 +138,7 @@ const ManufacturerProducts = () => {
 
   const closeAddModal = () => {
     setAddModalOpen(false);
-    setNewProduct({ name: '', category: '', price: '', quantity: '', warranty: '', description: '' });
+    setNewProduct({ name: '', category: '', price: '', quantity: 0, warranty: '', description: '' });
     setErrors({});
   };
 
