@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 
-const DashboardTopbar = ({ title, onToggleSidebar }) => {
+const DashboardTopbar = ({ title, onToggleSidebar, showCart }) => {
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -36,7 +36,25 @@ const DashboardTopbar = ({ title, onToggleSidebar }) => {
         </button>
         <h1 className="topbar-title">{title}</h1>
       </div>
-      <div className="topbar-right">
+      <div className="topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {showCart && (
+          <Link 
+            to="/vendor/cart" 
+            className="action-btn cart-btn" 
+            style={{ 
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.5rem',
+              color: '#475569',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+            title="View Cart"
+          >
+            <ShoppingCart size={20} />
+          </Link>
+        )}
 
         {/* Logout Button */}
         <button 
