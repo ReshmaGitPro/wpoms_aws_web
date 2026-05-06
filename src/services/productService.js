@@ -1,14 +1,15 @@
 import apiClient from '../apiClient';
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-const api = axios.create({ baseURL: API_URL });
 
 export const productService = {
   getAllProducts: async () => {
-    const response = await api.get(
+    const response = await apiClient.get(
       `/api/manufacturer/products?manufacturerId=${localStorage.getItem("roleId")}`
     );
+    return response.data;
+  },
+
+  getAllVendorProducts: async () => {
+    const response = await apiClient.get('/api/vendor/products');
     return response.data;
   },
 
@@ -17,7 +18,7 @@ export const productService = {
     const response = await apiClient.get(`/api/manufacturer/product?manufacturerId=${manufacturerId}&productId=${productId}`);
     const p = response.data;
 
-    // Normalize data if it comes in backend format
+    
     if (p && p.productName) {
       return {
         name: p.productName,

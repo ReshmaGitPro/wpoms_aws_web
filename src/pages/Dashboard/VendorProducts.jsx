@@ -16,9 +16,7 @@ const VendorProducts = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [sortBy, setSortBy] = useState('Newest First');
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 12;
+
 
   const fetchProducts = async () => {
     // Debugging logs as requested
@@ -28,7 +26,7 @@ const VendorProducts = () => {
 
     try {
       setIsLoading(true);
-      const data = await productService.getAllProducts();
+      const data = await productService.getAllVendorProducts();
       console.log("API response status: Success (200)");
       setProducts(data || []);
     } catch (err) {
@@ -50,8 +48,8 @@ const VendorProducts = () => {
     // Search
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
-      result = result.filter(p => 
-        (p.name && p.name.toLowerCase().includes(lowerSearch)) || 
+      result = result.filter(p =>
+        (p.name && p.name.toLowerCase().includes(lowerSearch)) ||
         (p.manufacturerName && p.manufacturerName.toLowerCase().includes(lowerSearch))
       );
     }
@@ -66,7 +64,7 @@ const VendorProducts = () => {
       result = result.filter(p => p.warranty === warrantyFilter);
     }
 
-   
+
     if (minPrice) {
       result = result.filter(p => p.price >= parseFloat(minPrice));
     }
@@ -86,11 +84,7 @@ const VendorProducts = () => {
     return result;
   }, [products, searchTerm, categoryFilter, warrantyFilter, minPrice, maxPrice, sortBy]);
 
-  // Pagination Logic
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
 
   const handleReset = () => {
     setSearchTerm('');
@@ -99,10 +93,9 @@ const VendorProducts = () => {
     setMinPrice('');
     setMaxPrice('');
     setSortBy('Newest First');
-    setCurrentPage(1);
   };
 
-  
+
   const categories = useMemo(() => {
     return ['All Categories', ...new Set(products.map(p => p.category).filter(Boolean))];
   }, [products]);
@@ -115,66 +108,61 @@ const VendorProducts = () => {
     <div className="catalog-page">
       <div className="catalog-header-wrapper">
         <h2 className="catalog-title">Product Catalog</h2>
-        
+
         <div className="catalog-filters-section">
           <div className="search-bar">
             <span className="material-symbols-outlined search-icon">search</span>
-            <input 
-              type="text" 
-              placeholder="Search product or manufacturer..." 
+            <input
+              type="text"
+              placeholder="Search product or manufacturer..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1);
               }}
             />
           </div>
-          
+
           <div className="filters-row">
-            <select 
-              value={categoryFilter} 
+            <select
+              value={categoryFilter}
               onChange={(e) => {
                 setCategoryFilter(e.target.value);
-                setCurrentPage(1);
-              }} 
+              }}
               className="filter-select"
             >
               {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
-            
-            <select 
-              value={warrantyFilter} 
+
+            <select
+              value={warrantyFilter}
               onChange={(e) => {
                 setWarrantyFilter(e.target.value);
-                setCurrentPage(1);
-              }} 
+              }}
               className="filter-select"
             >
               {warranties.map(war => <option key={war} value={war}>{war}</option>)}
             </select>
-            
+
             <div className="price-range">
-              <input 
-                type="number" 
-                placeholder="₹ Min" 
-                value={minPrice} 
+              <input
+                type="number"
+                placeholder="₹ Min"
+                value={minPrice}
                 onChange={(e) => {
                   setMinPrice(e.target.value);
-                  setCurrentPage(1);
-                }} 
+                }}
               />
               <span>–</span>
-              <input 
-                type="number" 
-                placeholder="₹ Max" 
-                value={maxPrice} 
+              <input
+                type="number"
+                placeholder="₹ Max"
+                value={maxPrice}
                 onChange={(e) => {
                   setMaxPrice(e.target.value);
-                  setCurrentPage(1);
-                }} 
+                }}
               />
             </div>
-            
+
             <button className="btn-reset" onClick={handleReset}>Reset</button>
           </div>
         </div>
@@ -182,7 +170,7 @@ const VendorProducts = () => {
 
       <div className="catalog-results-header">
         <span className="results-count">
-          Showing {filteredProducts.length > 0 ? indexOfFirstProduct + 1 : 0} - {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products
+          Showing {filteredProducts.length} products
         </span>
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
           <option value="Newest First">Newest First</option>
@@ -193,13 +181,13 @@ const VendorProducts = () => {
 
       {isLoading ? (
         <div className="catalog-loading">Loading products...</div>
-      ) : currentProducts.length > 0 ? (
+      ) : filteredProducts.length > 0 ? (
         <>
           <div className="product-card-grid">
-            {currentProducts.map((product) => (
-              <div 
-                key={product.id} 
-                className="product-card" 
+            {filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                className="product-card"
                 onClick={() => navigate(`/vendor/product-catalog/${product.id}`)}
               >
                 <div className="product-card-image">
@@ -214,18 +202,18 @@ const VendorProducts = () => {
                 <div className="product-card-content">
                   <h3 className="product-name">{product.name || 'Unnamed Product'}</h3>
                   <p className="manufacturer-name">{product.manufacturerName || 'Unknown Manufacturer'}</p>
-                  
+
                   <div className="product-tags">
                     {product.category && <span className="tag category-tag">{product.category}</span>}
                     {product.warranty && <span className="tag warranty-tag">{product.warranty}</span>}
                   </div>
-                  
+
                   <div className="product-card-footer">
                     <span className="product-price">₹{product.price?.toLocaleString()}</span>
-                    <button 
-                      className="btn-add-cart" 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
+                    <button
+                      className="btn-add-cart"
+                      onClick={(e) => {
+                        e.stopPropagation();
                         // Placeholder for add to cart logic
                         console.log('Added to cart:', product.id);
                       }}
@@ -237,24 +225,7 @@ const VendorProducts = () => {
               </div>
             ))}
           </div>
-          
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button 
-                disabled={currentPage === 1} 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              >
-                Previous
-              </button>
-              <span className="page-info">Page {currentPage} of {totalPages}</span>
-              <button 
-                disabled={currentPage === totalPages} 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              >
-                Next
-              </button>
-            </div>
-          )}
+
         </>
       ) : (
         <div className="catalog-empty">
