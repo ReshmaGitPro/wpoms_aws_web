@@ -82,7 +82,7 @@ const VendorDashboardLayout = () => {
       </aside>
 
       <main className="dashboard-main">
-        <DashboardTopbar title="Vendor Dashboard" onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <DashboardTopbar title="Vendor Dashboard" onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} showCart={true} />
 
         <div className="dashboard-content">
           <Outlet />

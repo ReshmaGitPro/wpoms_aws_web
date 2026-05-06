@@ -214,8 +214,15 @@ const VendorProducts = () => {
                       className="btn-add-cart"
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Placeholder for add to cart logic
-                        console.log('Added to cart:', product.id);
+                        const savedCart = JSON.parse(localStorage.getItem('vendorCart') || '[]');
+                        const existingItem = savedCart.find(item => item.id === product.id);
+                        if (existingItem) {
+                          existingItem.quantity += 1;
+                        } else {
+                          savedCart.push({ ...product, quantity: 1 });
+                        }
+                        localStorage.setItem('vendorCart', JSON.stringify(savedCart));
+                        alert(`${product.name} added to cart!`);
                       }}
                     >
                       Add to Cart

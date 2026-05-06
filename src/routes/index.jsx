@@ -17,6 +17,7 @@ import Staffs from "../pages/Staffs/Staffs";
 import ManufacturerProducts from "../pages/Dashboard/ManufacturerProducts";
 import VendorProducts from "../pages/Dashboard/VendorProducts";
 import ProductDetailsPage from "../pages/Dashboard/ProductDetailsPage";
+import Cart from "../pages/Vendor/Cart";
 
 const AppRoutes = () => {
   return (
@@ -44,6 +45,7 @@ const AppRoutes = () => {
             <Route index element={<VendorOverview />} />
             <Route path="product-catalog" element={<VendorProducts />} />
             <Route path="product-catalog/:id" element={<ProductDetailsPage />} />
+            <Route path="cart" element={<Cart />} />
             <Route path="profile" element={<VendorProfile />} />
             <Route path="staffs" element={<Staffs type="vendor" />} />
           </Route>
