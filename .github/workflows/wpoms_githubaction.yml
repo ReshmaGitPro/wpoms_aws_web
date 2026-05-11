@@ -34,4 +34,4 @@ jobs:
             sudo docker build -t wpoms_web .
 
             # 5. Run the new container
-            sudo docker run -d --name wpoms_server -p 3003:3003 wpoms_web
+            sudo docker run -d --name wpoms_web -p 3003:3003 wpoms_web
