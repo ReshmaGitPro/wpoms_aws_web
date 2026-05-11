@@ -1,0 +1,37 @@
+name: Deploy to EC2
+
+on:
+ push:
+   branch:
+     - main
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: SSH into EC2 and Redeploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. Navigate to the repo
+            cd /home/${{ secrets.EC2_USER }}/git/wpoms_aws_web
+
+            # 2. Pull the latest code
+            git pull origin main
+
+            # 3. Stop and remove the existing container (ignore error if it doesn't exist)
+            sudo docker stop wpoms_web || true
+            sudo docker rm wpoms_web || true
+
+            # 4. Build the new image
+            sudo docker build -t wpoms_web .
+
+            # 5. Run the new container
+            sudo docker run -d --name wpoms_server -p 3003:3003 wpoms_web

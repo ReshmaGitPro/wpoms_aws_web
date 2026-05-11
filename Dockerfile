@@ -1,25 +1,14 @@
-# Use Node official image
-FROM node:20
-
-# Set working directory
+FROM node:20-alpine AS build
 WORKDIR /app
-
-# Copy package files and install dependencies
-COPY package*.json ./
+COPY package.json package-lock.json* ./
 RUN npm install
+COPY . ./
+RUN npm run build
 
-# Copy the rest of the app
-COPY . .
-
-# Copy .env to make VITE_ vars available
-#COPY .env .env
-
-# Set environment variables for HTTPS
-#ENV KEY_PATH=/app/cert/127.0.0.1+2-key.pem
-#ENV CERT_PATH=/app/cert/127.0.0.1+2.pem
-
-# Expose Vite dev server port
-EXPOSE 5173
-
-# Run Vite dev server with host binding
-CMD ["npm", "run", "dev", "--", "--host"]
+FROM node:20-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=build /app/dist ./dist
+ENV PORT=3003
+EXPOSE 3003
+CMD ["serve", "-s", "dist", "-l", "3003"]
